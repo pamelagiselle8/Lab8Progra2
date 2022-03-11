@@ -7,7 +7,7 @@ import java.util.*;
 
 public abstract class Carro implements Serializable {
     protected String nombre;
-    protected int numId, distancia;
+    protected int numId, distancia = 0;
     protected Color color = null;
     protected Random r = new Random();
     
@@ -53,6 +53,7 @@ public abstract class Carro implements Serializable {
 
     @Override
     public String toString() {
-        return "Carro{" + "nombre=" + nombre + ", numId=" + numId + ", distancia=" + distancia + ", color=" + color + '}';
+        return String.valueOf(numId);
+        //return "Carro{" + "nombre=" + nombre + ", numId=" + numId + ", distancia=" + distancia + ", color=" + color + '}';
     }
 }

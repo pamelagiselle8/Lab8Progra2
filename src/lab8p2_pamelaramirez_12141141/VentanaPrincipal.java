@@ -4,18 +4,23 @@ package lab8p2_pamelaramirez_12141141;
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 
 public class VentanaPrincipal extends javax.swing.JFrame {
     String pista = "";
     int largo = 0;
     Color color;
-    ArrayList <Carro> carros = new ArrayList();
-    
+    //ArrayList <Carro> carros = new ArrayList();
+    AdminCarros admin = new AdminCarros("./RegistroCarros.cbm");
+    DefaultComboBoxModel cboCarrosModel = new DefaultComboBoxModel();
+    DefaultTableModel modeloTabla = new DefaultTableModel();
     
     public VentanaPrincipal() {
         initComponents();
         this.setLocationRelativeTo(null);
+        actualizarCboCarros();
+        crearModeloTabla();
     }
     
     @SuppressWarnings("unchecked")
@@ -72,12 +77,25 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(tabla);
 
         cboCarros.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnAgregar.setText("Agregar");
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Numero identificador");
 
@@ -251,46 +269,58 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
         else {
             boolean agregado = false;
-            boolean existe = false;
             if (cboTipo.getSelectedIndex() >= 0) {
                 String nom = txtNom.getText();
                 int id = (Integer)spId.getValue();
-                for (Carro carro : carros) {
-                    if (carro.getNumId() == id) {
-                        existe = true;
-                    }
-                }
-                if (existe) {
-                    JOptionPane.showMessageDialog(this, "Ya existe un carro con ese numero.", "Error", 2);
-                }
-                else {
+                if (admin.idValido(id)) {
+                    admin.cargarArchivo();
                     switch (cboTipo.getSelectedIndex()) {
                         case 1: {
-                            carros.add(new McQueen(nom, id, color));
+                            admin.agregarCarro(new McQueen(nom, id, color));
                             agregado = true;
                             break;
                         }
                         case 2: {
-                            carros.add(new Convertible(nom, id, color));
+                            admin.agregarCarro(new Convertible(nom, id, color));
                             agregado = true;
                             break;
                         }
                         case 3: {
-                            carros.add(new Nascar(nom, id, color));
+                            admin.agregarCarro(new Nascar(nom, id, color));
                             agregado = true;
                             break;
                         }
                     }
                     if (agregado) {
+                        admin.escribirArchivo();
+                        actualizarCboCarros();
                         JOptionPane.showMessageDialog(this, "Carro agregado exitosamente.", "", 1);
                     }
                     else {
                         JOptionPane.showMessageDialog(this, "Debe seleccionar un tipo de carro.", "Error", 2);
                     }
                 }
+                else {
+                    JOptionPane.showMessageDialog(this, "Ya existe un carro con ese numero.", "Error", 2);
+                }
             }
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        if (cboCarros.getSelectedIndex() >= 0) {
+            try {
+                Carro carrito = admin.getCarros().get(admin.getCarros().indexOf(cboCarros.getSelectedItem()));
+                Object[] datos = new Object[3];
+                datos[0] = carrito.getNumId();
+                datos[1] = carrito.getNombre();
+                datos[2] = carrito.getDistancia();
+                modeloTabla.addRow(datos);
+            } catch (Exception e) {
+            }
+        }
+        
+    }//GEN-LAST:event_btnAgregarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -356,5 +386,34 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     
+    public void actualizarCboCarros() {
+        cboCarrosModel = new DefaultComboBoxModel();
+        try {
+            admin.cargarArchivo();
+            if (!admin.getCarros().isEmpty()) {
+                for (Carro carro : admin.getCarros()) {
+                    cboCarrosModel.addElement(carro);
+                }
+            }
+            cboCarros.setModel(cboCarrosModel);
+        } catch (Exception e) {
+            System.out.println("no");
+        }
+        
+    }
     
+    public void crearModeloTabla() {
+        modeloTabla = (DefaultTableModel) tabla.getModel();
+        String[] encabezado = new String[3];
+        modeloTabla.setColumnCount(3);
+        if (admin.getCarros().isEmpty()) {
+            modeloTabla.setRowCount(admin.getCarros().size());
+        }
+        encabezado[0] = "Identificador";
+        encabezado[1] = "Corredor";
+        encabezado[2] = "Distancia";
+        modeloTabla.setColumnIdentifiers(encabezado);
+        modeloTabla.setRowCount(0);
+        tabla.setModel(modeloTabla);
+    }
 }
