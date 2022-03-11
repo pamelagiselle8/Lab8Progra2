@@ -15,6 +15,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     AdminCarros admin = new AdminCarros("./RegistroCarros.cbm");
     DefaultComboBoxModel cboCarrosModel = new DefaultComboBoxModel();
     DefaultTableModel modeloTabla = new DefaultTableModel();
+    AdminCarrera carrera = new AdminCarrera();
     
     public VentanaPrincipal() {
         initComponents();
@@ -56,8 +57,18 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         btnComenzar.setText("Comenzar");
+        btnComenzar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnComenzarActionPerformed(evt);
+            }
+        });
 
         btnPausar.setText("Pausar");
+        btnPausar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPausarActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Pista:");
 
@@ -84,6 +95,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        tabla.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tabla);
@@ -310,17 +326,54 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
         if (cboCarros.getSelectedIndex() >= 0) {
             try {
+                boolean valido = true;
                 Carro carrito = admin.getCarros().get(admin.getCarros().indexOf(cboCarros.getSelectedItem()));
                 Object[] datos = new Object[3];
                 datos[0] = carrito.getNumId();
-                datos[1] = carrito.getNombre();
-                datos[2] = carrito.getDistancia();
-                modeloTabla.addRow(datos);
+                for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+                    if (modeloTabla.getValueAt(i, 0) == datos[0]) {
+                        valido = false;
+                    }
+                }
+                if (valido) {
+                    datos[1] = carrito.getNombre();
+                    datos[2] = carrito.getDistancia();
+                    modeloTabla.addRow(datos);
+                }
+                else {
+                    JOptionPane.showMessageDialog(this, "El carro seleccionado ya ha sido agregado.", "Error", 2);
+                }
             } catch (Exception e) {
+                
             }
         }
-        
+        else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un carro.", "Error", 2);
+        }
     }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void btnComenzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComenzarActionPerformed
+        for (int i = 0; i < admin.getCarros().size(); i++) {
+            //admin.getCarros().get(i).setBarrita(new AdminBarrita(pbCarrera, Integer.parseInt(txtPista.getText()), admin.getCarros().get(i)));
+            
+        }
+        
+    }//GEN-LAST:event_btnComenzarActionPerformed
+
+    private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
+        int fila = tabla.getSelectedRow();
+        int colum = tabla.getSelectedColumn();
+        //tabla.
+    }//GEN-LAST:event_tablaMouseClicked
+
+    private void btnPausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPausarActionPerformed
+        if (btnPausar.getText().equalsIgnoreCase("Pausar")) {
+            btnPausar.setText("Reanudar");
+        }
+        else {
+            btnPausar.setText("Pausar");
+        }
+    }//GEN-LAST:event_btnPausarActionPerformed
 
     /**
      * @param args the command line arguments
