@@ -347,8 +347,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         if (!txtPista.getText().isEmpty() || !txtLargo.getText().isEmpty()) {
             lblPista.setText(txtPista.getText());
             lblLargo.setText(txtLargo.getText());
-            txtPista.setText(null);
-            txtLargo.setText(null);
             JOptionPane.showMessageDialog(this, "Pista agregada.", "", 1);
         }
         else {
@@ -392,9 +390,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     if (agregado) {
                         admin.escribirArchivo();
                         actualizarCboCarros();
-                        txtNom.setText(null);
-                        spId.setValue(0);
-                        cboTipo.setSelectedIndex(0);
                         JOptionPane.showMessageDialog(this, "Carro agregado exitosamente.", "", 1);
                     }
                     else {
@@ -439,7 +434,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnComenzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComenzarActionPerformed
-        if (lblLargo.getText().isEmpty()) {
+        if (txtLargo.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Debe ingresar un largo.", "Error", 2);
         }
         else{
@@ -476,8 +471,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         spId.setValue(0);
         cboTipo.setSelectedIndex(0);
         pbCarrera.setValue(0);
-        txtPista.setText(null);
-        txtLargo.setText(null);
         crearModeloTabla();
         //actualizarTabla();
     }//GEN-LAST:event_btnReiniciarActionPerformed
