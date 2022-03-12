@@ -447,8 +447,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             hilo = new AdminBarrita(pbCarrera, carros, tabla);
             hilo.setFin(false);
             hilo.setAvanzar(true);
-            hilo.run();
-            //hilo.start();
+            //hilo.run();
+            hilo.start();
         }
         
     }//GEN-LAST:event_btnComenzarActionPerformed
