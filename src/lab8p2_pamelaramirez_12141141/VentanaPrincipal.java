@@ -439,7 +439,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnComenzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComenzarActionPerformed
-        if (txtLargo.getText().isEmpty()) {
+        if (lblLargo.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Debe ingresar un largo.", "Error", 2);
         }
         else{
@@ -447,8 +447,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             hilo = new AdminBarrita(pbCarrera, carros, tabla);
             hilo.setFin(false);
             hilo.setAvanzar(true);
-            //hilo.run();
-            hilo.start();
+            hilo.run();
+            //hilo.start();
         }
         
     }//GEN-LAST:event_btnComenzarActionPerformed
