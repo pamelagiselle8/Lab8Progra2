@@ -1,6 +1,7 @@
 
 package lab8p2_pamelaramirez_12141141;
 
+import java.util.ArrayList;
 import javax.swing.*;
 
 
@@ -17,6 +18,10 @@ public class AdminBarrita implements Runnable {
         fin = false;
         carrito = carro;
         limite = pista;
+    }
+
+    AdminBarrita(JProgressBar pbCarrera, ArrayList<Carro> carros, JTable tabla) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public JProgressBar getBarrita() {

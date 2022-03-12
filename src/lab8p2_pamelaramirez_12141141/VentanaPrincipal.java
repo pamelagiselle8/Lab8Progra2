@@ -7,7 +7,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 
-public class VentanaPrincipal extends javax.swing.JFrame implements Runnable {
+public class VentanaPrincipal extends javax.swing.JFrame {
     String pista = "";
     int largo = 0;
     Color color;
@@ -17,6 +17,7 @@ public class VentanaPrincipal extends javax.swing.JFrame implements Runnable {
     DefaultTableModel modeloTabla = new DefaultTableModel();
     AdminCarrera carrera = new AdminCarrera();
     boolean fin, avanzar;
+    AdminBarrita hilo;
     
     public VentanaPrincipal() {
         initComponents();
@@ -368,7 +369,10 @@ public class VentanaPrincipal extends javax.swing.JFrame implements Runnable {
                 pbCarrera.setValue(Integer.parseInt(txtLargo.getText()));
                 fin = false;
                 avanzar = true;
-                this.run();
+                hilo = new AdminBarrita(pbCarrera, carros, tabla);
+                hilo.setFin(false);
+                hilo.setAvanza(true);
+                hilo.run();
             }
             catch (Exception e) {
                 
@@ -379,11 +383,11 @@ public class VentanaPrincipal extends javax.swing.JFrame implements Runnable {
 
     private void btnPausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPausarActionPerformed
         if (btnPausar.getText().equalsIgnoreCase("Pausar")) {
-            avanzar = false;
+            hilo.setAvanza(false);
             btnPausar.setText("Reanudar");
         }
         else {
-            avanzar = true;
+            hilo.setAvanza(true);
             btnPausar.setText("Pausar");
         }
     }//GEN-LAST:event_btnPausarActionPerformed
@@ -506,43 +510,4 @@ public class VentanaPrincipal extends javax.swing.JFrame implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
-        while (!fin){
-            if (avanzar) {
-                for (Carro car : carros) {
-                    
-                    car.setDistancia(car.getDistancia() + car.recorre());
-                    modeloTabla.setValueAt(car.getDistancia(), carros.indexOf(car), 2);
-                    tabla.setModel(modeloTabla);
-                    if (car.getDistancia() < pbCarrera.getMaximum()) {
-                        if (tabla.getSelectedRow() >= 0) {
-                            Carro carroSeleccionado = carros.get(tabla.getSelectedRow());
-                            pbCarrera.setBackground(carroSeleccionado.getColor());
-                            pbCarrera.setValue(carroSeleccionado.getDistancia());
-                        }
-                    }
-                    else {
-                        fin = true;
-                        avanzar = false;
-                        JOptionPane.showMessageDialog(this, "Ha ganado " + car.getNombre() + "!", "Carrera finalizada", 1);
-                    }
-                    try {
-                        Thread.sleep(0);
-                    }
-                    catch (Exception e) {
-                        
-                    }
-                }
-            }
-            try {
-                Thread.sleep(1000);
-            }
-            catch (Exception e) {
-
-            }
-        }
-    }
-    
-    
 }
