@@ -53,7 +53,7 @@ public abstract class Carro implements Serializable {
 
     @Override
     public String toString() {
-        return String.valueOf(numId);
-        //return "Carro{" + "nombre=" + nombre + ", numId=" + numId + ", distancia=" + distancia + ", color=" + color + '}';
+        return nombre;
     }
+    
 }

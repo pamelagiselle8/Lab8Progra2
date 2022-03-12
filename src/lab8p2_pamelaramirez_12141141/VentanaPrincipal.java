@@ -7,15 +7,16 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 
-public class VentanaPrincipal extends javax.swing.JFrame {
+public class VentanaPrincipal extends javax.swing.JFrame implements Runnable {
     String pista = "";
     int largo = 0;
     Color color;
-    //ArrayList <Carro> carros = new ArrayList();
+    ArrayList <Carro> carros = new ArrayList();
     AdminCarros admin = new AdminCarros("./RegistroCarros.cbm");
     DefaultComboBoxModel cboCarrosModel = new DefaultComboBoxModel();
     DefaultTableModel modeloTabla = new DefaultTableModel();
     AdminCarrera carrera = new AdminCarrera();
+    boolean fin, avanzar;
     
     public VentanaPrincipal() {
         initComponents();
@@ -57,6 +58,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         btnComenzar.setText("Comenzar");
+        btnComenzar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnComenzarMouseClicked(evt);
+            }
+        });
         btnComenzar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnComenzarActionPerformed(evt);
@@ -95,11 +101,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
-            }
-        });
-        tabla.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tabla);
@@ -147,6 +148,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
 
         btnReiniciar.setText("Reiniciar");
+        btnReiniciar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReiniciarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -339,6 +345,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     datos[1] = carrito.getNombre();
                     datos[2] = carrito.getDistancia();
                     modeloTabla.addRow(datos);
+                    carros.add(carrito);
                 }
                 else {
                     JOptionPane.showMessageDialog(this, "El carro seleccionado ya ha sido agregado.", "Error", 2);
@@ -353,27 +360,44 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnComenzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComenzarActionPerformed
-        for (int i = 0; i < admin.getCarros().size(); i++) {
-            //admin.getCarros().get(i).setBarrita(new AdminBarrita(pbCarrera, Integer.parseInt(txtPista.getText()), admin.getCarros().get(i)));
-            
+        if (txtLargo.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar un largo.", "Error", 2);
+        }
+        else{
+            try {
+                pbCarrera.setValue(Integer.parseInt(txtLargo.getText()));
+                fin = false;
+                avanzar = true;
+                this.run();
+            }
+            catch (Exception e) {
+                
+            }
         }
         
     }//GEN-LAST:event_btnComenzarActionPerformed
 
-    private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
-        int fila = tabla.getSelectedRow();
-        int colum = tabla.getSelectedColumn();
-        //tabla.
-    }//GEN-LAST:event_tablaMouseClicked
-
     private void btnPausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPausarActionPerformed
         if (btnPausar.getText().equalsIgnoreCase("Pausar")) {
+            avanzar = false;
             btnPausar.setText("Reanudar");
         }
         else {
+            avanzar = true;
             btnPausar.setText("Pausar");
         }
     }//GEN-LAST:event_btnPausarActionPerformed
+
+    private void btnReiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReiniciarActionPerformed
+        carros = new ArrayList();
+        for (Carro carro : admin.getCarros()) {
+            carro.setDistancia(0);
+        }
+    }//GEN-LAST:event_btnReiniciarActionPerformed
+
+    private void btnComenzarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComenzarMouseClicked
+        
+    }//GEN-LAST:event_btnComenzarMouseClicked
 
     /**
      * @param args the command line arguments
@@ -469,4 +493,56 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         modeloTabla.setRowCount(0);
         tabla.setModel(modeloTabla);
     }
+    
+    public void actualizarTabla() {
+        for (Carro carrito : carros) {
+            Object[] datos = new Object[3];
+            for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+                datos[0] = carrito.getNumId();
+                datos[1] = carrito.getNombre();
+                datos[2] = carrito.getDistancia();
+                modeloTabla.addRow(datos);
+            }
+        }
+    }
+
+    @Override
+    public void run() {
+        while (!fin){
+            if (avanzar) {
+                for (Carro car : carros) {
+                    
+                    car.setDistancia(car.getDistancia() + car.recorre());
+                    modeloTabla.setValueAt(car.getDistancia(), carros.indexOf(car), 2);
+                    tabla.setModel(modeloTabla);
+                    if (car.getDistancia() < pbCarrera.getMaximum()) {
+                        if (tabla.getSelectedRow() >= 0) {
+                            Carro carroSeleccionado = carros.get(tabla.getSelectedRow());
+                            pbCarrera.setBackground(carroSeleccionado.getColor());
+                            pbCarrera.setValue(carroSeleccionado.getDistancia());
+                        }
+                    }
+                    else {
+                        fin = true;
+                        avanzar = false;
+                        JOptionPane.showMessageDialog(this, "Ha ganado " + car.getNombre() + "!", "Carrera finalizada", 1);
+                    }
+                    try {
+                        Thread.sleep(0);
+                    }
+                    catch (Exception e) {
+                        
+                    }
+                }
+            }
+            try {
+                Thread.sleep(1000);
+            }
+            catch (Exception e) {
+
+            }
+        }
+    }
+    
+    
 }
