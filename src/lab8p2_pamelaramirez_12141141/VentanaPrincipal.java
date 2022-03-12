@@ -366,7 +366,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
         else{
             try {
-                pbCarrera.setValue(Integer.parseInt(txtLargo.getText()));
+                pbCarrera.setMaximum(Integer.parseInt(txtLargo.getText()));
                 fin = false;
                 avanzar = true;
                 hilo = new AdminBarrita(pbCarrera, carros, tabla);
@@ -397,6 +397,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         for (Carro carro : admin.getCarros()) {
             carro.setDistancia(0);
         }
+        for (Carro carro : carros) {
+            carro.setDistancia(0);
+        }
+        actualizarTabla();
     }//GEN-LAST:event_btnReiniciarActionPerformed
 
     private void btnComenzarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComenzarMouseClicked
