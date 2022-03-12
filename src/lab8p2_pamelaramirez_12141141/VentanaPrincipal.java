@@ -110,6 +110,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tabla);
 
+        pbCarrera.setBackground(new java.awt.Color(255, 204, 255));
+        pbCarrera.setForeground(new java.awt.Color(0, 0, 0));
+
         cboCarros.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnAgregar.setText("Agregar");
@@ -411,7 +414,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             if (tabla.getSelectedRow() >= 0) {
                 Carro carroSeleccionado = hilo.getCarros().get(tabla.getSelectedRow());
                 pbCarrera.setValue(carroSeleccionado.getDistancia());
-                pbCarrera.setBackground(carroSeleccionado.getColor());
+                
             }
         }
         catch (Exception e) {

@@ -73,16 +73,18 @@ public class AdminBarrita extends Thread {
         for (int i = 0; i < arreglo.length; i++) {
             carros.add(arreglo[i]);
         }
+    }
+    
+    public void actualizarTabla(){
+        ordenar();
         DefaultTableModel modeloTabla = (DefaultTableModel) tabla.getModel();
         modeloTabla.setRowCount(0);
         for (Carro carrito : carros) {
             Object[] datos = new Object[3];
-            for (int i = 0; i < modeloTabla.getRowCount(); i++) {
-                datos[0] = carrito.getNumId();
-                datos[1] = carrito.getNombre();
-                datos[2] = carrito.getDistancia();
-                modeloTabla.addRow(datos);
-            }
+            datos[0] = carrito.getNumId();
+            datos[1] = carrito.getNombre();
+            datos[2] = carrito.getDistancia();
+            modeloTabla.addRow(datos);
         }
         tabla.setModel(modeloTabla);
     }
@@ -95,8 +97,7 @@ public class AdminBarrita extends Thread {
                     car.setDistancia(car.getDistancia() + car.recorre());
                     tabla.setValueAt(car.getDistancia(), carros.indexOf(car), 2);
                 }
-                
-                //ordenar();
+                actualizarTabla();
                 for (Carro car : carros) {
                     if (car.getDistancia() > barrita.getMaximum()) {
                         fin = true;
@@ -105,6 +106,7 @@ public class AdminBarrita extends Thread {
                         break;
                     }
                 }
+                
             }
             try {
                 Thread.sleep(1000);
