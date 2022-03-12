@@ -3,25 +3,23 @@ package lab8p2_pamelaramirez_12141141;
 
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 
 public class AdminBarrita implements Runnable {
     private JProgressBar barrita;
-    private boolean avanza, fin;
-    private Carro carrito;
+    private boolean avanzar, fin;
+    private ArrayList<Carro> carros;
     private int limite;
+    private JTable tabla;
     
-    public AdminBarrita(JProgressBar barra, int pista, Carro carro) {
+    public AdminBarrita(JProgressBar barra, ArrayList<Carro> carros, JTable tabla) {
         barrita = barra;
-        barrita.setBackground(carro.getColor());
-        avanza = false;
+        avanzar = false;
         fin = false;
-        carrito = carro;
-        limite = pista;
-    }
-
-    AdminBarrita(JProgressBar pbCarrera, ArrayList<Carro> carros, JTable tabla) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.carros = carros;
+        this.limite = barra.getMaximum();
+        this.tabla = tabla;
     }
 
     public JProgressBar getBarrita() {
@@ -32,12 +30,12 @@ public class AdminBarrita implements Runnable {
         this.barrita = barrita;
     }
 
-    public boolean isAvanza() {
-        return avanza;
+    public boolean isAvanzar() {
+        return avanzar;
     }
 
-    public void setAvanza(boolean avanza) {
-        this.avanza = avanza;
+    public void setAvanzar(boolean avanzar) {
+        this.avanzar = avanzar;
     }
 
     public boolean isFin() {
@@ -48,13 +46,13 @@ public class AdminBarrita implements Runnable {
         this.fin = fin;
     }
 
-    @Override
+    /*@Override
     public void run() {
         while(!fin) {
             if (avanza) {
                 barrita.setValue(barrita.getValue() + carrito.recorre());
                 carrito.setDistancia(barrita.getValue());
-                if (barrita.getValue() == barrita.getMaximum()) {
+                if (barrita.getValue() < barrita.getMaximum()) {
                     fin = true;
                 }
             }
@@ -63,6 +61,77 @@ public class AdminBarrita implements Runnable {
             }
             catch (InterruptedException ex) {
                 
+            }
+        }
+    }*/
+    
+    public DefaultTableModel ordenar() {
+        Carro[] arreglo = new Carro[carros.size()];
+        Carro mayor;
+        for (int i = 0; i < carros.size(); i++) {
+            arreglo[i] = carros.get(i);
+        }
+        for (int i = 0; i < arreglo.length; i++) {
+            for (int j = 0; j < arreglo.length; j++) {
+                if (arreglo[i].distancia > arreglo[j].distancia) {
+                    mayor = arreglo[i];
+                    arreglo[i] = arreglo[j];
+                    arreglo[j] = mayor;
+                }
+            }
+        }
+        carros.clear();
+        for (int i = 0; i < arreglo.length; i++) {
+            carros.add(arreglo[i]);
+        }
+        DefaultTableModel modeloTabla = new DefaultTableModel();
+        String[] encabezado = new String[3];
+        modeloTabla.setColumnCount(3);
+        encabezado[0] = "Identificador";
+        encabezado[1] = "Corredor";
+        encabezado[2] = "Distancia";
+        modeloTabla.setColumnIdentifiers(encabezado);
+        modeloTabla.setRowCount(0);
+        tabla.setModel(modeloTabla);
+        for (Carro carrito : carros) {
+            Object[] datos = new Object[3];
+            for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+                datos[0] = carrito.getNumId();
+                datos[1] = carrito.getNombre();
+                datos[2] = carrito.getDistancia();
+                modeloTabla.addRow(datos);
+            }
+        }
+        return modeloTabla;
+    }
+    
+    @Override
+    public void run() {
+        while (!fin) {
+            if (avanzar) {
+                for (Carro car : carros) {
+                    car.setDistancia(car.getDistancia() + car.recorre());
+                    tabla.setValueAt(car.getDistancia(), carros.indexOf(car), 2);
+                    //tabla.setModel(ordenar());
+                    Carro carroSeleccionado = carros.get(tabla.getSelectedRow());
+                    barrita.setBackground(carroSeleccionado.getColor());
+                    barrita.setValue(carroSeleccionado.getDistancia());
+                    if (car.getDistancia() > barrita.getMaximum()) {
+                        System.out.println(barrita.getMaximum());
+                        System.out.println("dis " + car.getDistancia());
+                        fin = true;
+                        avanzar = false;
+                        JOptionPane.showMessageDialog(null, "Ha ganado " + car.getNombre() + "!", "Carrera finalizada", 1);
+                        break;
+                    }
+                    
+                }
+            }
+            try {
+                Thread.sleep(1000);
+            }
+            catch (Exception e) {
+
             }
         }
     }

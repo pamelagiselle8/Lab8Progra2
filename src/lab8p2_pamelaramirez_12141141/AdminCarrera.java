@@ -30,13 +30,13 @@ public class AdminCarrera extends Thread {
     
     public void pausarBarritas() {
         for (AdminBarrita bar : barritas) {
-            bar.setAvanza(false);
+            //bar.setAvanza(false);
         }
     }
     
     public void reanudarBarritas() {
         for (AdminBarrita bar : barritas) {
-            bar.setAvanza(true);
+            //bar.setAvanza(true);
         }
     }
 
@@ -65,7 +65,7 @@ public class AdminCarrera extends Thread {
     @Override
     public synchronized void start() {
         for (AdminBarrita bar : barritas) {
-            bar.setAvanza(true);
+            //bar.setAvanza(true);
             bar.run();
         }
         try {

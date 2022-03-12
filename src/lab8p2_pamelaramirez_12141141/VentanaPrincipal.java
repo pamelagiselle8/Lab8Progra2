@@ -372,7 +372,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 avanzar = true;
                 hilo = new AdminBarrita(pbCarrera, carros, tabla);
                 hilo.setFin(false);
-                hilo.setAvanza(true);
+                hilo.setAvanzar(true);
                 hilo.run();
             }
             catch (Exception e) {
@@ -384,11 +384,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void btnPausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPausarActionPerformed
         if (btnPausar.getText().equalsIgnoreCase("Pausar")) {
-            hilo.setAvanza(false);
+            hilo.setAvanzar(false);
             btnPausar.setText("Reanudar");
         }
         else {
-            hilo.setAvanza(true);
+            hilo.setAvanzar(true);
             btnPausar.setText("Pausar");
         }
     }//GEN-LAST:event_btnPausarActionPerformed
@@ -401,7 +401,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         for (Carro carro : carros) {
             carro.setDistancia(0);
         }
-        actualizarTabla();
+        crearModeloTabla();
+        //actualizarTabla();
     }//GEN-LAST:event_btnReiniciarActionPerformed
 
     private void btnComenzarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComenzarMouseClicked
