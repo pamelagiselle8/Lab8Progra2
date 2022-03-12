@@ -367,6 +367,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         else{
             try {
                 pbCarrera.setMaximum(Integer.parseInt(txtLargo.getText()));
+                System.out.println("hola");
                 fin = false;
                 avanzar = true;
                 hilo = new AdminBarrita(pbCarrera, carros, tabla);
