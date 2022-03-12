@@ -45,27 +45,8 @@ public class AdminBarrita implements Runnable {
     public void setFin(boolean fin) {
         this.fin = fin;
     }
-
-    /*@Override
-    public void run() {
-        while(!fin) {
-            if (avanza) {
-                barrita.setValue(barrita.getValue() + carrito.recorre());
-                carrito.setDistancia(barrita.getValue());
-                if (barrita.getValue() < barrita.getMaximum()) {
-                    fin = true;
-                }
-            }
-            try {
-                Thread.sleep(1000);
-            }
-            catch (InterruptedException ex) {
-                
-            }
-        }
-    }*/
     
-    public DefaultTableModel ordenar() {
+    public void ordenar() {
         Carro[] arreglo = new Carro[carros.size()];
         Carro mayor;
         for (int i = 0; i < carros.size(); i++) {
@@ -73,14 +54,14 @@ public class AdminBarrita implements Runnable {
         }
         for (int i = 0; i < arreglo.length; i++) {
             for (int j = 0; j < arreglo.length; j++) {
-                if (arreglo[i].distancia > arreglo[j].distancia) {
+                if (arreglo[i].getDistancia() > arreglo[j].getDistancia()) {
                     mayor = arreglo[i];
                     arreglo[i] = arreglo[j];
                     arreglo[j] = mayor;
                 }
             }
         }
-        carros.clear();
+        carros = new ArrayList();
         for (int i = 0; i < arreglo.length; i++) {
             carros.add(arreglo[i]);
         }
@@ -91,8 +72,7 @@ public class AdminBarrita implements Runnable {
         encabezado[1] = "Corredor";
         encabezado[2] = "Distancia";
         modeloTabla.setColumnIdentifiers(encabezado);
-        modeloTabla.setRowCount(0);
-        tabla.setModel(modeloTabla);
+        // modeloTabla.setRowCount(0);
         for (Carro carrito : carros) {
             Object[] datos = new Object[3];
             for (int i = 0; i < modeloTabla.getRowCount(); i++) {
@@ -102,7 +82,7 @@ public class AdminBarrita implements Runnable {
                 modeloTabla.addRow(datos);
             }
         }
-        return modeloTabla;
+        tabla.setModel(modeloTabla);
     }
     
     @Override
@@ -112,23 +92,22 @@ public class AdminBarrita implements Runnable {
                 for (Carro car : carros) {
                     car.setDistancia(car.getDistancia() + car.recorre());
                     tabla.setValueAt(car.getDistancia(), carros.indexOf(car), 2);
-                    //tabla.setModel(ordenar());
-                    Carro carroSeleccionado = carros.get(tabla.getSelectedRow());
-                    barrita.setBackground(carroSeleccionado.getColor());
-                    barrita.setValue(carroSeleccionado.getDistancia());
+                    // ordenar();
+                    if (tabla.getSelectedRow() >= 0) {
+                        Carro carroSeleccionado = carros.get(tabla.getSelectedRow());
+                        barrita.setBackground(carroSeleccionado.getColor());
+                        barrita.setString(Integer.toString(carroSeleccionado.getDistancia()));
+                    }
                     if (car.getDistancia() > barrita.getMaximum()) {
-                        System.out.println(barrita.getMaximum());
-                        System.out.println("dis " + car.getDistancia());
                         fin = true;
                         avanzar = false;
                         JOptionPane.showMessageDialog(null, "Ha ganado " + car.getNombre() + "!", "Carrera finalizada", 1);
                         break;
                     }
-                    
                 }
             }
             try {
-                Thread.sleep(1000);
+                Thread.sleep(50);
             }
             catch (Exception e) {
 

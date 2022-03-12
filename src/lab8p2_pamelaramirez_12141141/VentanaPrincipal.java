@@ -15,7 +15,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     AdminCarros admin = new AdminCarros("./RegistroCarros.cbm");
     DefaultComboBoxModel cboCarrosModel = new DefaultComboBoxModel();
     DefaultTableModel modeloTabla = new DefaultTableModel();
-    AdminCarrera carrera = new AdminCarrera();
     boolean fin, avanzar;
     AdminBarrita hilo;
     
@@ -365,19 +364,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Debe ingresar un largo.", "Error", 2);
         }
         else{
-            try {
-                pbCarrera.setMaximum(Integer.parseInt(txtLargo.getText()));
-                System.out.println("hola");
-                fin = false;
-                avanzar = true;
-                hilo = new AdminBarrita(pbCarrera, carros, tabla);
-                hilo.setFin(false);
-                hilo.setAvanzar(true);
-                hilo.run();
-            }
-            catch (Exception e) {
-                
-            }
+            pbCarrera.setMaximum(Integer.parseInt(txtLargo.getText()));
+            hilo = new AdminBarrita(pbCarrera, carros, tabla);
+            hilo.setFin(false);
+            hilo.setAvanzar(true);
+            hilo.run();
         }
         
     }//GEN-LAST:event_btnComenzarActionPerformed
