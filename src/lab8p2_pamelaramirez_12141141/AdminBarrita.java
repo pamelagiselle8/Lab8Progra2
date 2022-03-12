@@ -6,7 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 
-public class AdminBarrita implements Runnable {
+public class AdminBarrita extends Thread {
     private JProgressBar barrita;
     private boolean avanzar, fin;
     private ArrayList<Carro> carros;
@@ -15,8 +15,8 @@ public class AdminBarrita implements Runnable {
     
     public AdminBarrita(JProgressBar barra, ArrayList<Carro> carros, JTable tabla) {
         barrita = barra;
-        avanzar = false;
-        fin = false;
+        avanzar = true;
+        fin = true;
         this.carros = carros;
         this.limite = barra.getMaximum();
         this.tabla = tabla;
@@ -45,6 +45,14 @@ public class AdminBarrita implements Runnable {
     public void setFin(boolean fin) {
         this.fin = fin;
     }
+
+    public ArrayList<Carro> getCarros() {
+        return carros;
+    }
+
+    public void setCarros(ArrayList<Carro> carros) {
+        this.carros = carros;
+    }
     
     public void ordenar() {
         Carro[] arreglo = new Carro[carros.size()];
@@ -65,14 +73,8 @@ public class AdminBarrita implements Runnable {
         for (int i = 0; i < arreglo.length; i++) {
             carros.add(arreglo[i]);
         }
-        DefaultTableModel modeloTabla = new DefaultTableModel();
-        String[] encabezado = new String[3];
-        modeloTabla.setColumnCount(3);
-        encabezado[0] = "Identificador";
-        encabezado[1] = "Corredor";
-        encabezado[2] = "Distancia";
-        modeloTabla.setColumnIdentifiers(encabezado);
-        // modeloTabla.setRowCount(0);
+        DefaultTableModel modeloTabla = (DefaultTableModel) tabla.getModel();
+        modeloTabla.setRowCount(0);
         for (Carro carrito : carros) {
             Object[] datos = new Object[3];
             for (int i = 0; i < modeloTabla.getRowCount(); i++) {
@@ -92,12 +94,10 @@ public class AdminBarrita implements Runnable {
                 for (Carro car : carros) {
                     car.setDistancia(car.getDistancia() + car.recorre());
                     tabla.setValueAt(car.getDistancia(), carros.indexOf(car), 2);
-                    // ordenar();
-                    if (tabla.getSelectedRow() >= 0) {
-                        Carro carroSeleccionado = carros.get(tabla.getSelectedRow());
-                        barrita.setBackground(carroSeleccionado.getColor());
-                        barrita.setString(Integer.toString(carroSeleccionado.getDistancia()));
-                    }
+                }
+                
+                //ordenar();
+                for (Carro car : carros) {
                     if (car.getDistancia() > barrita.getMaximum()) {
                         fin = true;
                         avanzar = false;
@@ -107,7 +107,7 @@ public class AdminBarrita implements Runnable {
                 }
             }
             try {
-                Thread.sleep(50);
+                Thread.sleep(1000);
             }
             catch (Exception e) {
 

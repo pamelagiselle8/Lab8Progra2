@@ -103,6 +103,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tabla.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabla);
 
         cboCarros.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -368,7 +373,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             hilo = new AdminBarrita(pbCarrera, carros, tabla);
             hilo.setFin(false);
             hilo.setAvanzar(true);
-            hilo.run();
+            //hilo.run();
+            hilo.start();
         }
         
     }//GEN-LAST:event_btnComenzarActionPerformed
@@ -399,6 +405,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void btnComenzarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComenzarMouseClicked
         
     }//GEN-LAST:event_btnComenzarMouseClicked
+
+    private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
+        try {
+            if (tabla.getSelectedRow() >= 0) {
+                Carro carroSeleccionado = hilo.getCarros().get(tabla.getSelectedRow());
+                pbCarrera.setValue(carroSeleccionado.getDistancia());
+                pbCarrera.setBackground(carroSeleccionado.getColor());
+            }
+        }
+        catch (Exception e) {
+            
+        }
+    }//GEN-LAST:event_tablaMouseClicked
 
     /**
      * @param args the command line arguments
